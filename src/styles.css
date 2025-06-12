@@ -1,0 +1,6 @@
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: url('assets/bg.jpg') center center/cover no-repeat fixed;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}

@@ -1,0 +1,57 @@
+<div class="container">
+  <div class="left-panel">
+    <h1 class="title">Mango Disease Detection</h1>
+    <form (ngSubmit)="onSubmit()" #formRef="ngForm" class="predict-form">
+      <label class="file-label">
+        <span>Select an image:</span>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" required />
+      </label>
+      <button type="submit" [disabled]="!selectedFile" class="predict-btn">Predict</button>
+    </form>
+    <!-- Show uploaded image preview -->
+    <div *ngIf="imagePreview" class="image-preview">
+      <img [src]="imagePreview" alt="Uploaded image" style="max-width: 600px; max-height: 350px; margin-top: 10px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" />
+    </div>
+  </div>
+  <div class="right-panel">
+    <div *ngIf="prediction" class="result-card">
+      <h3 class="result-title">Prediction: <span class="predicted-class">{{ prediction.predicted_class }}</span></h3>
+      <div class="confidence-bar">
+        <span>Confidence:</span>
+        <div class="bar-bg">
+          <div
+            class="bar-fill"
+            [style.width.%]="prediction.confidence * 100"
+            [ngStyle]="{
+              'background': prediction.confidence >= 0.8 ? '#43a047'
+                          : prediction.confidence >= 0.5 ? '#fbc02d'
+                          : '#e53935'
+            }"
+          ></div>
+        </div>
+        <span
+          class="confidence-value"
+          [ngStyle]="{
+            'color': prediction.confidence >= 0.8 ? '#43a047'
+                     : prediction.confidence >= 0.5 ? '#fbc02d'
+                     : '#e53935'
+          }"
+        >
+          {{ prediction.confidence * 100 | number: '1.0-2' }}%
+        </span>
+      </div>
+      <p *ngIf="prediction.treatment" class="treatment">
+        <strong>Treatment:</strong> {{ prediction.treatment }}
+      </p>
+      <div class="probabilities">
+        <p>Probabilities:</p>
+        <ul>
+          <li *ngFor="let prob of prediction.probabilities; let i = index">
+            <span class="class-name">{{ classNames[i] }}</span>
+            <span class="prob-value">{{ prob * 100 | number: '1.0-2' }}%</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
