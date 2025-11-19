@@ -40,3 +40,7 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Generated outputs from Monte Carlo simulation
+tornado_chart.png
+laffer_curve.png
