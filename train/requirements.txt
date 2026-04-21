@@ -1,0 +1,28 @@
+# MangoSense – Python dependencies
+# Install with:  pip install -r requirements.txt
+
+# Deep learning
+tensorflow>=2.13.0,<3.0.0          # Core framework (CPU or GPU build)
+# tensorflow-gpu>=2.13.0,<3.0.0    # Uncomment if using a dedicated NVIDIA GPU
+
+# Data handling
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0                 # stratified splits, K-fold, metrics
+Pillow>=10.0.0                      # Image loading / saving
+opencv-python-headless>=4.8.0       # Optional fast image I/O (headless for servers)
+
+# Visualisation
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Configuration
+PyYAML>=6.0
+
+# Utilities
+tqdm>=4.65.0                        # Progress bars
+joblib>=1.3.0                       # Parallel processing (used by scikit-learn)
+
+# Optional – experiment tracking (uncomment to use)
+# tensorboard>=2.13.0               # Already bundled with TF, listed for clarity
+# mlflow>=2.5.0                     # MLflow experiment tracking
