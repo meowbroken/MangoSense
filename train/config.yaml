@@ -1,0 +1,102 @@
+# MangoSense - Multi-Modal CNN Training Configuration
+# Edit these parameters to tune model training without modifying Python scripts.
+
+# ---------------------------------------------------------------------------
+# Data paths
+# ---------------------------------------------------------------------------
+data:
+  leaf_images_dir: "data/leaf_images"        # Directory of leaf images (class sub-folders)
+  fruit_images_dir: "data/fruit_images"       # Directory of fruit images (class sub-folders)
+  symptoms_csv: "data/symptoms_data.csv"      # CSV with columns: image_path, symptom_*, disease_label
+  preprocessed_output_dir: "data/preprocessed"  # Where preprocessed TF datasets are saved
+
+# ---------------------------------------------------------------------------
+# Image settings
+# ---------------------------------------------------------------------------
+image:
+  height: 224
+  width: 224
+  channels: 3
+
+# ---------------------------------------------------------------------------
+# Dataset split ratios  (must sum to 1.0)
+# ---------------------------------------------------------------------------
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  random_seed: 42
+
+# ---------------------------------------------------------------------------
+# Data augmentation (applied only to the training set)
+# ---------------------------------------------------------------------------
+augmentation:
+  rotation_range: 30          # degrees
+  width_shift_range: 0.15
+  height_shift_range: 0.15
+  zoom_range: 0.20
+  horizontal_flip: true
+  vertical_flip: false
+  brightness_range: [0.8, 1.2]
+
+# ---------------------------------------------------------------------------
+# Model architecture
+# ---------------------------------------------------------------------------
+model:
+  backbone: "EfficientNetB0"   # Pretrained CNN backbone
+  backbone_weights: "imagenet"
+  fine_tune_from_layer: 100    # Unfreeze layers after this index during fine-tuning
+  symptom_embedding_dim: 64    # Dense units for the symptom branch
+  fusion_dense_units: [256, 128]
+  dropout_rate: 0.50
+  l2_regularization: 0.0001
+
+# ---------------------------------------------------------------------------
+# Training
+# ---------------------------------------------------------------------------
+training:
+  # Phase 1 – train only the new head (backbone frozen)
+  phase1_epochs: 20
+  phase1_learning_rate: 0.001
+  phase1_batch_size: 32
+
+  # Phase 2 – fine-tune backbone + head
+  phase2_epochs: 50
+  phase2_learning_rate: 0.00001
+  phase2_batch_size: 16
+
+  # Early stopping
+  early_stopping_patience: 10
+  early_stopping_monitor: "val_loss"
+
+  # Learning-rate reduction on plateau
+  reduce_lr_factor: 0.5
+  reduce_lr_patience: 5
+  reduce_lr_min_lr: 0.000001
+
+# ---------------------------------------------------------------------------
+# Cross-validation
+# ---------------------------------------------------------------------------
+cross_validation:
+  enabled: false   # Set true to run K-fold before final training (multiplies training time by n_folds)
+  n_folds: 5
+  shuffle: true
+  random_seed: 42
+
+# ---------------------------------------------------------------------------
+# Output paths
+# ---------------------------------------------------------------------------
+output:
+  models_dir: "models"                          # Saved model files
+  best_model_name: "mangosense_multimodal_best.keras"
+  history_dir: "training_history"               # Training history JSON files
+  plots_dir: "plots"                            # PNG visualisation outputs
+  logs_dir: "logs"                              # TensorBoard log directory
+
+# ---------------------------------------------------------------------------
+# Hardware / performance
+# ---------------------------------------------------------------------------
+hardware:
+  use_mixed_precision: false   # Set true for GPU with Tensor Cores (fp16 training)
+  prefetch_buffer: -1          # -1 → tf.data.AUTOTUNE
+  num_parallel_calls: -1       # -1 → tf.data.AUTOTUNE
